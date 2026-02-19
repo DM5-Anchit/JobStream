@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JobStream</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center">
+
+  <h1 class="text-4xl font-bold mt-10">JobStream</h1>
+
+  <div class="mt-10 w-full max-w-md bg-white p-6 rounded shadow">
+    <input type="file" id="resume" class="mb-4" />
+    <button onclick="uploadResume()" class="bg-blue-500 text-white px-4 py-2 rounded w-full">
+      Analyze Resume
+    </button>
+  </div>
+
+  <div id="progress" class="mt-6 text-gray-600"></div>
+  <div id="results" class="mt-10 w-full max-w-4xl"></div>
+
+<script>
+async function uploadResume() {
+  const fileInput = document.getElementById("resume");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Upload a PDF first.");
+    return;
+  }
+
+  document.getElementById("progress").innerText = "Processing resume...";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/api/analyze", {
+    method: "POST",
+    body: file
+  });
+
+  const data = await response.json();
+
+  document.getElementById("progress").innerText = "Done!";
+
+  const container = document.getElementById("results");
+  container.innerHTML = "";
+
+  data.jobs.forEach(job => {
+    const card = document.createElement("div");
+    card.className = "bg-white p-6 rounded shadow mb-6";
+
+    card.innerHTML = `
+      <h2 class="text-xl font-bold">${job.title}</h2>
+      <p class="text-gray-600">${job.company}</p>
+      <p class="text-green-600">${job.salary.raw}</p>
+      <p class="mt-2 text-sm">Match Score: ${job.match_score}</p>
+      <a href="${job.apply_link}" target="_blank" class="text-blue-500 underline">Apply</a>
+      <h3 class="mt-4 font-semibold">Cover Letter:</h3>
+      <p class="text-sm mt-2">${job.cover_letter}</p>
+    `;
+
+    container.appendChild(card);
+  });
+}
+</script>
+
+</body>
+</html>

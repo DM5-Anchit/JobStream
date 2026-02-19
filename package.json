@@ -1,0 +1,10 @@
+{
+  "name": "jobstream",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@google/generative-ai": "^0.15.0",
+    "pdf-parse": "^1.1.1",
+    "node-fetch": "^3.3.2"
+  }
+}
