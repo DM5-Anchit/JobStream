@@ -2,7 +2,6 @@ import pdf from "pdf-parse";
 import { extractProfile } from "../lib/extractProfile.js";
 import { fetchJobs } from "../lib/fetchJobs.js";
 import { matchJobs } from "../lib/matchJobs.js";
-import { generateCoverLetter } from "../lib/generateCoverLetter.js";
 
 export const config = {
   api: {
@@ -30,14 +29,6 @@ export default async function handler(req, res) {
 
   const matchedJobs = matchJobs(candidate, jobs);
 
-  const coverLetters = await generateCoverLetters(candidate, matchedJobs);
-
-  coverLetters.forEach(item => {
-  const index = item.jobIndex - 1;
-  if (matchedJobs[index]) {
-    matchedJobs[index].cover_letter = item.cover_letter;
-  }
-  });
 
 
   res.status(200).json({
