@@ -30,9 +30,15 @@ export default async function handler(req, res) {
 
   const matchedJobs = matchJobs(candidate, jobs);
 
-  for (let job of matchedJobs) {
-    job.cover_letter = await generateCoverLetter(candidate, job);
+  const coverLetters = await generateCoverLetters(candidate, matchedJobs);
+
+  coverLetters.forEach(item => {
+  const index = item.jobIndex - 1;
+  if (matchedJobs[index]) {
+    matchedJobs[index].cover_letter = item.cover_letter;
   }
+  });
+
 
   res.status(200).json({
     status: "success",
